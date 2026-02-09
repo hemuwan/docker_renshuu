@@ -1,0 +1,14 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+    container_name: vue3_app
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app # ホットリロードのためのバインド 
+      - /app/node_modules # ホストと衝突回避
+    stdin_open: true
+    tty: true
+
+# sudo docker compose up --build
