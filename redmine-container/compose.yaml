@@ -1,0 +1,36 @@
+services:
+  db:
+    image: mariadb:11.4
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MARIADB_DATABASE: redmine
+      MARIADB_USER: redmine
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redmine:
+    image: redmine:5-trixie
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      REDMINE_DB_MYSQL: db
+      REDMINE_DB_DATABASE: redmine
+      REDMINE_DB_USERNAME: redmine
+      REDMINE_DB_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      db:
+        condition: service_healthy # db コンテナが “healthy” になってから redmine を起動する, helthcheck の内容を実施してからredmine 起動
+    volumes:
+      - redmine-files:/usr/src/redmine/files
+
+volumes:
+  db-data:
+  redmine-files:
