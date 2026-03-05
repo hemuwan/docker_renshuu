@@ -34,3 +34,6 @@ services:
 volumes:
   db-data:
   redmine-files:
+
+# docker compose up -d
+# バックグラウンド起動
